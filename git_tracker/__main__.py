@@ -4,14 +4,21 @@ import json
 import subprocess
 from datetime import datetime, timedelta
 from collections import deque
-from typing import Optional
+from typing import Optional, Literal
 
 from pydantic import BaseModel, HttpUrl
 from typer import Typer, Argument
-
+from enum import Enum
 from git_tracker.core import aggregate_and_export_git_logs, Commit, Repo
 
 app = Typer()
+
+
+class OutputFormat(str, Enum):
+    csv = "csv"
+    json = "json"
+    yaml = "yaml"
+    md = "md"
 
 
 @app.command()
@@ -24,9 +31,8 @@ def main(
         default="git_aggregate_report",
         help="Output file name without extension (default: git_aggregate_report)",
     ),
-    format: str = Argument(
-        default="csv",
-        choices=["csv", "json", "yaml", "md"],
+    format: OutputFormat = Argument(
+        default=OutputFormat.csv,
         help="Output format: csv, json, yaml, or md (default: csv)",
     ),
     since: Optional[str] = Argument(

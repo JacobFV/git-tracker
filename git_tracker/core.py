@@ -23,6 +23,16 @@ class Repo(BaseModel):
 def find_git_repos(root_dir):
     """
     Recursively find all git repositories under root_dir using BFS.
+
+    >>> import tempfile
+    >>> import os
+    >>> with tempfile.TemporaryDirectory() as tmpdir:
+    ...     os.mkdir(os.path.join(tmpdir, '.git'))
+    ...     os.mkdir(os.path.join(tmpdir, 'subdir'))
+    ...     os.mkdir(os.path.join(tmpdir, 'subdir', '.git'))
+    ...     repos = find_git_repos(tmpdir)
+    ...     len(repos)
+    2
     """
     git_repos = []
     queue = deque([root_dir])
@@ -255,3 +265,9 @@ def aggregate_and_export_git_logs(
         write_yaml(output_file, repos)
     elif output_format == "md":
         write_markdown(output_file, repos)
+
+
+if __name__ == "__main__":
+    import doctest
+
+    doctest.testmod()
